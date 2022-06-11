@@ -1,0 +1,104 @@
+# import pygame library
+import pygame
+import random
+import math
+# pygame initializing
+pygame.init()
+
+# create window and window details
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Eat!")
+
+
+# images
+characterImg = pygame.image.load("monster-hand-drawn-toy.png")
+backgroundImg = pygame.image.load("background 1.webp")
+enemyImg = pygame.image.load("enemy.png")
+# velocity, will be used further down for character movement
+vel= 1
+#point
+point = 0
+# character info, and position
+characterX = 500
+characterY = 475
+characterY_change = 0
+characterX_change = 0
+
+
+# enemy info, makes enemy location a bit more randomized
+enemyX = random.randint(0, 800)
+enemyY = random.randint(50, 150)
+enemyX_change = 0
+enemyY_change = 0
+
+# character function that makes the character visible
+def character(characterX, characterY):
+    screen.blit(characterImg,(characterX, characterY))
+
+# enemy function that makes the enemy visible
+def enemy(enemyX, enemyY):
+    screen.blit(enemyImg,(enemyX, enemyY))
+# collision def that will check distance
+def isCollision(characterX, characterY ,enemyX, enemyY):
+    distance = math.sqrt(math.pow(characterX - enemyX, 2)+ math.pow(characterY-enemyY, 2))
+    if distance < 100:
+        print("get closer")
+    if distance <=20:
+        pygame.quit()
+
+# game loop to keep the window running
+running = True
+while running:
+#screen color in RGB
+    screen.fill((255, 255, 255))
+#background image
+    screen.blit(backgroundImg, (0, 0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                characterX_change += -vel
+            if event.key == pygame.K_RIGHT:
+                characterX_change += vel
+            if event.key == pygame.K_UP:
+                characterY_change += -vel
+            if event.key == pygame.K_DOWN:
+                characterY_change += +vel
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                characterX_change += vel
+            if event.key == pygame.K_RIGHT:
+                characterX_change += -vel
+            if event.key == pygame.K_UP:
+                characterY_change += vel
+            if event.key == pygame.K_DOWN:
+                characterY_change -= vel
+
+    # Border checking for characterX and characterY
+    if characterX < 0:
+        characterX = 800
+    if characterX > 800:
+        characterX = 0
+    if characterY < 0:
+        characterY = 600
+    if characterY > 600:
+        characterY = 0
+
+# enemy move (doesn't work)
+    if enemyX <= 0:
+        enemyX_change = 0.5
+    elif enemyX >= 800:
+        enemyX_change = -0.5
+
+
+
+
+
+    characterX += characterX_change
+    characterY += characterY_change
+    enemyX += enemyX_change
+    character(characterX, characterY)
+    enemy(enemyX, enemyY)
+    pygame.display.update()
